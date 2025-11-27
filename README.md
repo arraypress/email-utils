@@ -11,10 +11,13 @@ composer require arraypress/email-utils
 ## Usage
 
 ### Basic Parsing
-
 ```php
 use ArrayPress\EmailUtils\Email;
 
+// Using the helper function
+$email = parse_email( 'david+newsletter@gmail.com' );
+
+// Or using the static method
 $email = Email::parse( 'david+newsletter@gmail.com' );
 
 if ( $email ) {
@@ -24,6 +27,13 @@ if ( $email ) {
     $email->base_address();  // 'david@gmail.com'
     $email->subaddress();    // 'newsletter'
 }
+```
+
+### One-Liners with Nullsafe Operator
+```php
+$domain = parse_email( $input )?->domain();
+$score  = parse_email( $input )?->spam_score() ?? 100;
+$valid  = parse_email( $input )?->valid() ?? false;
 ```
 
 ### One-Liners with Nullsafe Operator
