@@ -30,7 +30,7 @@
       "ArrayPress\\EmailUtils\\": "src/"
     },
     "files": [
-      "src/functions.php"
+      "src/Functions.php"
     ]
   },
   "autoload-dev": {
