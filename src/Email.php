@@ -1238,6 +1238,44 @@ class Email implements JsonSerializable, Stringable {
 	}
 
 	/**
+	 * Get a human-readable rating for the spam score.
+	 *
+	 * @param bool $check_mx Whether to include MX check in scoring.
+	 *
+	 * @return string The rating (excellent, good, fair, poor, bad).
+	 */
+	public function spam_rating( bool $check_mx = false ): string {
+		$score = $this->spam_score( $check_mx );
+
+		return match ( true ) {
+			$score <= 10 => 'excellent',
+			$score <= 25 => 'good',
+			$score <= 50 => 'fair',
+			$score <= 75 => 'poor',
+			default      => 'bad',
+		};
+	}
+
+	/**
+	 * Get simplified analysis array for API responses.
+	 *
+	 * @param bool $check_mx Whether to check MX records.
+	 *
+	 * @return array Simplified analysis data.
+	 */
+	public function to_simple_array( bool $check_mx = false ): array {
+		return [
+			'email'         => $this->normalized,
+			'valid'         => $this->valid,
+			'score'         => $this->spam_score( $check_mx ),
+			'rating'        => $this->spam_rating( $check_mx ),
+			'free_provider' => $this->is_common_provider(),
+			'role_account'  => $this->is_role_based(),
+			'domain'        => $this->domain,
+		];
+	}
+
+	/**
 	 * Get comprehensive analysis array.
 	 *
 	 * @param bool $check_mx Whether to check MX records.
