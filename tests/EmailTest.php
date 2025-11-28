@@ -2,7 +2,10 @@
 /**
  * Email Utils Test Suite
  *
- * @package ArrayPress\EmailUtils\Tests
+ * @package     ArrayPress\EmailUtils\Tests
+ * @copyright   Copyright (c) 2025, ArrayPress Limited
+ * @license     GPL-2.0-or-later
+ * @since       1.0.0
  */
 
 declare( strict_types=1 );
@@ -93,7 +96,7 @@ class EmailTest extends TestCase {
 	}
 
 	/** -------------------------------------------------------------------------
-	 * Detection Tests
+	 * Provider Detection Tests
 	 * ---------------------------------------------------------------------- */
 
 	public function test_is_subaddressed(): void {
@@ -120,6 +123,10 @@ class EmailTest extends TestCase {
 		$this->assertFalse( Email::parse( 'user@mycompany.com' )?->supports_subaddressing() );
 	}
 
+	/** -------------------------------------------------------------------------
+	 * Domain Detection Tests
+	 * ---------------------------------------------------------------------- */
+
 	public function test_is_private(): void {
 		$this->assertTrue( Email::parse( 'user@myapp.local' )?->is_private() );
 		$this->assertTrue( Email::parse( 'user@server.internal' )?->is_private() );
@@ -140,6 +147,10 @@ class EmailTest extends TestCase {
 		$this->assertTrue( Email::parse( 'user@example.co' )?->is_commercial_tld() );
 		$this->assertFalse( Email::parse( 'user@example.com' )?->is_commercial_tld() );
 	}
+
+	/** -------------------------------------------------------------------------
+	 * Institutional Detection Tests
+	 * ---------------------------------------------------------------------- */
 
 	public function test_is_role_based(): void {
 		$this->assertTrue( Email::parse( 'admin@example.com' )?->is_role_based() );
@@ -170,13 +181,85 @@ class EmailTest extends TestCase {
 		$this->assertFalse( Email::parse( 'user@gmail.com' )?->is_educational() );
 	}
 
+	public function test_is_military(): void {
+		$this->assertTrue( Email::parse( 'user@army.mil' )?->is_military() );
+		$this->assertTrue( Email::parse( 'user@navy.mil' )?->is_military() );
+		$this->assertTrue( Email::parse( 'user@mod.uk' )?->is_military() );
+		$this->assertTrue( Email::parse( 'user@bundeswehr.de' )?->is_military() );
+		$this->assertTrue( Email::parse( 'user@nato.int' )?->is_military() );
+		$this->assertFalse( Email::parse( 'user@gmail.com' )?->is_military() );
+	}
+
+	/** -------------------------------------------------------------------------
+	 * Typo Detection Tests
+	 * ---------------------------------------------------------------------- */
+
+	public function test_has_typo(): void {
+		$this->assertTrue( Email::parse( 'user@gmial.com' )?->has_typo() );
+		$this->assertTrue( Email::parse( 'user@hotmal.com' )?->has_typo() );
+		$this->assertTrue( Email::parse( 'user@yaho.com' )?->has_typo() );
+		$this->assertTrue( Email::parse( 'user@outlok.com' )?->has_typo() );
+		$this->assertFalse( Email::parse( 'user@gmail.com' )?->has_typo() );
+	}
+
+	public function test_suggested_domain(): void {
+		$this->assertEquals( 'gmail.com', Email::parse( 'user@gmial.com' )?->suggested_domain() );
+		$this->assertEquals( 'hotmail.com', Email::parse( 'user@hotmal.com' )?->suggested_domain() );
+		$this->assertEquals( 'yahoo.com', Email::parse( 'user@yaho.com' )?->suggested_domain() );
+		$this->assertNull( Email::parse( 'user@gmail.com' )?->suggested_domain() );
+	}
+
+	public function test_suggested_email(): void {
+		$this->assertEquals( 'user@gmail.com', Email::parse( 'user@gmial.com' )?->suggested_email() );
+		$this->assertEquals( 'david@hotmail.com', Email::parse( 'david@hotmal.com' )?->suggested_email() );
+		$this->assertNull( Email::parse( 'user@gmail.com' )?->suggested_email() );
+	}
+
+	public function test_typo_detection_affects_common_provider(): void {
+		$this->assertTrue( Email::parse( 'user@gmial.com' )?->is_common_provider() );
+		$this->assertTrue( Email::parse( 'user@hotmal.com' )?->is_common_provider() );
+	}
+
+	public function test_typo_detection_affects_authority_provider(): void {
+		$this->assertTrue( Email::parse( 'user@gmial.com' )?->is_authority_provider() );
+		$this->assertTrue( Email::parse( 'user@yaho.com' )?->is_authority_provider() );
+	}
+
+	public function test_typo_detection_affects_supports_subaddressing(): void {
+		$this->assertTrue( Email::parse( 'user@gmial.com' )?->supports_subaddressing() );
+		$this->assertTrue( Email::parse( 'user@outlok.com' )?->supports_subaddressing() );
+	}
+
+	/** -------------------------------------------------------------------------
+	 * Auto-Generated Detection Tests
+	 * ---------------------------------------------------------------------- */
+
+	public function test_is_auto_generated_high_digit_ratio(): void {
+		$this->assertTrue( Email::parse( 'user123456789@gmail.com' )?->is_auto_generated() );
+		$this->assertTrue( Email::parse( 'abc12345678@gmail.com' )?->is_auto_generated() );
+	}
+
+	public function test_is_auto_generated_no_vowels(): void {
+		$this->assertTrue( Email::parse( 'hxkrjmfp@gmail.com' )?->is_auto_generated() );
+		$this->assertTrue( Email::parse( 'xkcd82hf92@gmail.com' )?->is_auto_generated() );
+	}
+
+	public function test_is_auto_generated_normal_emails(): void {
+		$this->assertFalse( Email::parse( 'david@gmail.com' )?->is_auto_generated() );
+		$this->assertFalse( Email::parse( 'john.smith@gmail.com' )?->is_auto_generated() );
+		$this->assertFalse( Email::parse( 'david2024@gmail.com' )?->is_auto_generated() );
+		$this->assertFalse( Email::parse( 'sarah.connor@gmail.com' )?->is_auto_generated() );
+		$this->assertFalse( Email::parse( 'admin@gmail.com' )?->is_auto_generated() );
+	}
+
+	/** -------------------------------------------------------------------------
+	 * Pattern Detection Tests
+	 * ---------------------------------------------------------------------- */
+
 	public function test_is_anonymized(): void {
-		// Test via constructor with invalid/anonymized email
-		// Note: Anonymized emails with asterisks won't parse as valid
 		$email = Email::parse( 'david@gmail.com' );
 		$this->assertFalse( $email->is_anonymized() );
 
-		// Test placeholder detection
 		$placeholder = Email::parse( 'deleted@site.invalid' );
 		$this->assertNotNull( $placeholder );
 		$this->assertTrue( $placeholder->is_anonymized() );
@@ -185,12 +268,15 @@ class EmailTest extends TestCase {
 	public function test_has_year(): void {
 		$this->assertTrue( Email::parse( 'david1980@gmail.com' )?->has_year() );
 		$this->assertTrue( Email::parse( 'user2023@gmail.com' )?->has_year() );
+		$this->assertTrue( Email::parse( 'born1995@gmail.com' )?->has_year() );
 		$this->assertFalse( Email::parse( 'david@gmail.com' )?->has_year() );
 		$this->assertFalse( Email::parse( 'user123@gmail.com' )?->has_year() );
 	}
 
 	public function test_has_excessive_specials(): void {
 		$this->assertTrue( Email::parse( 'user.name.here.now@gmail.com' )?->has_excessive_specials() );
+		$this->assertTrue( Email::parse( 'user--name@gmail.com' )?->has_excessive_specials() );
+		$this->assertTrue( Email::parse( 'user__name@gmail.com' )?->has_excessive_specials() );
 		$this->assertFalse( Email::parse( 'user-name@gmail.com' )?->has_excessive_specials() );
 		$this->assertFalse( Email::parse( 'user.name@gmail.com' )?->has_excessive_specials() );
 		$this->assertFalse( Email::parse( 'username@gmail.com' )?->has_excessive_specials() );
@@ -202,10 +288,22 @@ class EmailTest extends TestCase {
 		$this->assertFalse( Email::parse( 'david@gmail.com' )?->has_long_local() );
 	}
 
+	public function test_has_long_local_custom_length(): void {
+		$email = Email::parse( 'david12345@gmail.com' );
+		$this->assertFalse( $email->has_long_local( 20 ) );
+		$this->assertTrue( $email->has_long_local( 5 ) );
+	}
+
 	public function test_has_long_domain(): void {
 		$longDomain = str_repeat( 'a', 16 ) . '.com';
 		$this->assertTrue( Email::parse( 'user@' . $longDomain )?->has_long_domain() );
 		$this->assertFalse( Email::parse( 'user@gmail.com' )?->has_long_domain() );
+	}
+
+	public function test_has_long_domain_custom_length(): void {
+		$email = Email::parse( 'user@mycompany.com' );
+		$this->assertFalse( $email->has_long_domain( 15 ) );
+		$this->assertTrue( $email->has_long_domain( 5 ) );
 	}
 
 	/** -------------------------------------------------------------------------
@@ -304,7 +402,7 @@ class EmailTest extends TestCase {
 		$hashed = $email->to_hashed();
 
 		$this->assertStringContainsString( '@gmail.com', $hashed );
-		$this->assertEquals( 64 + 1 + 9, strlen( $hashed ) ); // 64 char hash + @ + gmail.com
+		$this->assertEquals( 64 + 1 + 9, strlen( $hashed ) );
 	}
 
 	public function test_to_hashed_with_domain(): void {
@@ -328,6 +426,12 @@ class EmailTest extends TestCase {
 		$this->assertEquals( 'deleted@site.invalid', $email->to_placeholder() );
 	}
 
+	public function test_to_ascii(): void {
+		$email = Email::parse( 'user@example.com' );
+
+		$this->assertEquals( 'user@example.com', $email->to_ascii() );
+	}
+
 	/** -------------------------------------------------------------------------
 	 * Spam Score Tests
 	 * ---------------------------------------------------------------------- */
@@ -339,7 +443,6 @@ class EmailTest extends TestCase {
 	}
 
 	public function test_spam_score_increases_with_digits(): void {
-		// Use non-common provider to avoid the -10 bonus
 		$clean = Email::parse( 'david@example.com' );
 		$digits = Email::parse( 'david12345@example.com' );
 
@@ -358,6 +461,23 @@ class EmailTest extends TestCase {
 		$random = Email::parse( 'user123456@randomsite.com' );
 
 		$this->assertLessThan( $random->spam_score(), $gmail->spam_score() );
+	}
+
+	/** -------------------------------------------------------------------------
+	 * Spam Rating Tests
+	 * ---------------------------------------------------------------------- */
+
+	public function test_spam_rating_excellent(): void {
+		$email = Email::parse( 'david@gmail.com' );
+
+		$this->assertEquals( 'excellent', $email->spam_rating() );
+	}
+
+	public function test_spam_rating_returns_valid_rating(): void {
+		$email = Email::parse( 'x8k2m9p4q7@weird.xyz' );
+		$validRatings = [ 'excellent', 'good', 'fair', 'poor', 'bad' ];
+
+		$this->assertContains( $email->spam_rating(), $validRatings );
 	}
 
 	/** -------------------------------------------------------------------------
@@ -423,7 +543,59 @@ class EmailTest extends TestCase {
 		$this->assertArrayHasKey( 'domain', $data );
 		$this->assertArrayHasKey( 'tld', $data );
 		$this->assertArrayHasKey( 'spam_score', $data );
+		$this->assertArrayHasKey( 'spam_rating', $data );
 		$this->assertArrayHasKey( 'common_provider', $data );
+		$this->assertArrayHasKey( 'military', $data );
+		$this->assertArrayHasKey( 'auto_generated', $data );
+		$this->assertArrayHasKey( 'has_typo', $data );
+		$this->assertArrayHasKey( 'suggestion', $data );
+	}
+
+	/** -------------------------------------------------------------------------
+	 * Simple Array Tests
+	 * ---------------------------------------------------------------------- */
+
+	public function test_to_simple_array(): void {
+		$email = Email::parse( 'david@gmail.com' );
+		$data = $email->to_simple_array();
+
+		$this->assertArrayHasKey( 'email', $data );
+		$this->assertArrayHasKey( 'valid', $data );
+		$this->assertArrayHasKey( 'score', $data );
+		$this->assertArrayHasKey( 'rating', $data );
+		$this->assertArrayHasKey( 'free_provider', $data );
+		$this->assertArrayHasKey( 'role_account', $data );
+		$this->assertArrayHasKey( 'domain', $data );
+	}
+
+	public function test_to_simple_array_includes_typo_when_detected(): void {
+		$email = Email::parse( 'user@gmial.com' );
+		$data = $email->to_simple_array();
+
+		$this->assertArrayHasKey( 'has_typo', $data );
+		$this->assertArrayHasKey( 'suggestion', $data );
+		$this->assertTrue( $data['has_typo'] );
+		$this->assertEquals( 'user@gmail.com', $data['suggestion'] );
+	}
+
+	public function test_to_simple_array_excludes_typo_when_not_present(): void {
+		$email = Email::parse( 'user@gmail.com' );
+		$data = $email->to_simple_array();
+
+		$this->assertArrayNotHasKey( 'has_typo', $data );
+		$this->assertArrayNotHasKey( 'suggestion', $data );
+	}
+
+	public function test_to_simple_array_values(): void {
+		$email = Email::parse( 'admin@gmail.com' );
+		$data = $email->to_simple_array();
+
+		$this->assertEquals( 'admin@gmail.com', $data['email'] );
+		$this->assertTrue( $data['valid'] );
+		$this->assertTrue( $data['free_provider'] );
+		$this->assertTrue( $data['role_account'] );
+		$this->assertEquals( 'gmail.com', $data['domain'] );
+		$this->assertEquals( 'excellent', $data['rating'] );
 	}
 
 }
