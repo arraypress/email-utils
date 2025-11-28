@@ -27,11 +27,18 @@ final class Government {
 	 * Government domain patterns.
 	 */
 	public const PATTERNS = [
+		// Generic
 		'.gov',
 		'.mil',
+
+		// United States
+		// Uses .gov directly
+
+		// United Kingdom & Commonwealth
 		'.gov.uk',
 		'.gov.au',
 		'.gov.nz',
+		'.govt.nz',
 		'.gov.ca',
 		'.gov.ie',
 		'.gov.za',
@@ -45,7 +52,8 @@ final class Government {
 		'.gov.ng',
 		'.gov.gh',
 		'.gov.ke',
-		'.govt.nz',
+
+		// Spanish-speaking (gob = gobierno)
 		'.gob.mx',
 		'.gob.es',
 		'.gob.ar',
@@ -66,10 +74,14 @@ final class Government {
 		'.gob.do',
 		'.gob.cu',
 		'.gob.pr',
+
+		// Portuguese-speaking
 		'.gov.br',
 		'.gov.pt',
 		'.gov.ao',
 		'.gov.mz',
+
+		// French-speaking (gouv = gouvernement)
 		'.gouv.fr',
 		'.gouv.ca',
 		'.gouv.be',
@@ -85,9 +97,13 @@ final class Government {
 		'.gouv.cd',
 		'.gouv.cg',
 		'.gouv.cm',
+
+		// German-speaking
 		'.gv.at',
 		'.admin.ch',
 		'.bund.de',
+
+		// Other European
 		'.overheid.nl',
 		'.gov.be',
 		'.gov.it',
@@ -98,10 +114,14 @@ final class Government {
 		'.gov.bg',
 		'.gov.ru',
 		'.gov.ua',
-		'.gov.il',
 		'.gov.tr',
+
+		// Middle East
+		'.gov.il',
 		'.gov.ae',
 		'.gov.sa',
+
+		// Asia
 		'.gov.cn',
 		'.gov.jp',
 		'.go.jp',
@@ -111,6 +131,8 @@ final class Government {
 		'.gov.vn',
 		'.gov.id',
 		'.go.id',
+
+		// Catch-all patterns (must be last)
 		'.gov.',
 		'.gob.',
 		'.gouv.',

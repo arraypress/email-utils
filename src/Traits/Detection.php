@@ -19,6 +19,7 @@ namespace ArrayPress\EmailUtils\Traits;
 use ArrayPress\EmailUtils\Data\Educational;
 use ArrayPress\EmailUtils\Data\Government;
 use ArrayPress\EmailUtils\Data\Military;
+use ArrayPress\EmailUtils\Data\PrivateDomains;
 use ArrayPress\EmailUtils\Data\Providers;
 use ArrayPress\EmailUtils\Data\Roles;
 use ArrayPress\EmailUtils\Data\Tlds;
@@ -156,9 +157,7 @@ trait Detection {
 			return false;
 		}
 
-		$patterns = [ 'localhost', '127.0.0.1', '192.168.', '10.', '172.16.', '.local', '.internal', '.test' ];
-
-		foreach ( $patterns as $pattern ) {
+		foreach ( PrivateDomains::PATTERNS as $pattern ) {
 			if ( str_contains( $this->domain, $pattern ) ) {
 				return true;
 			}

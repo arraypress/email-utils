@@ -17,10 +17,12 @@ declare( strict_types=1 );
 
 namespace ArrayPress\EmailUtils;
 
+use ArrayPress\EmailUtils\Traits\Comparison;
 use ArrayPress\EmailUtils\Traits\Core;
 use ArrayPress\EmailUtils\Traits\Detection;
 use ArrayPress\EmailUtils\Traits\Transformation;
 use ArrayPress\EmailUtils\Traits\Scoring;
+use ArrayPress\EmailUtils\Traits\Utilities;
 use JsonSerializable;
 use Stringable;
 
@@ -40,7 +42,9 @@ class Email implements JsonSerializable, Stringable {
 	use Core;
 	use Detection;
 	use Transformation;
+	use Comparison;
 	use Scoring;
+	use Utilities;
 
 	/**
 	 * String representation.

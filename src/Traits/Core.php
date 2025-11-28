@@ -88,7 +88,7 @@ trait Core {
 		if ( $this->valid ) {
 			$this->normalized = strtolower( $email );
 			[ $this->local, $this->domain ] = explode( '@', $this->normalized );
-			$this->tld = strtolower( substr( strrchr( $this->domain, '.' ), 1 ) );
+			$this->tld = self::extract_tld( $this->domain );
 		} else {
 			$this->normalized = $email;
 			$this->local      = '';
@@ -102,9 +102,9 @@ trait Core {
 	 *
 	 * @param string $email The email address.
 	 *
-	 * @return self|null Email instance or null if invalid.
+	 * @return static|null Email instance or null if invalid.
 	 */
-	public static function parse( string $email ): ?self {
+	public static function parse( string $email ): ?static {
 		try {
 			$instance = new self( $email );
 
@@ -120,9 +120,9 @@ trait Core {
 	 * @param string $local  The local part.
 	 * @param string $domain The domain part.
 	 *
-	 * @return self|null Email instance or null if invalid.
+	 * @return static|null Email instance or null if invalid.
 	 */
-	public static function from_parts( string $local, string $domain ): ?self {
+	public static function from_parts( string $local, string $domain ): ?static {
 		return self::parse( $local . '@' . $domain );
 	}
 

@@ -28,9 +28,9 @@ trait Transformation {
 	 *
 	 * @param string $local The new local part.
 	 *
-	 * @return self|null New Email instance or null if invalid.
+	 * @return static|null New Email instance or null if invalid.
 	 */
-	public function with_local( string $local ): ?self {
+	public function with_local( string $local ): ?static {
 		return self::parse( $local . '@' . $this->domain );
 	}
 
@@ -39,9 +39,9 @@ trait Transformation {
 	 *
 	 * @param string $domain The new domain.
 	 *
-	 * @return self|null New Email instance or null if invalid.
+	 * @return static|null New Email instance or null if invalid.
 	 */
-	public function with_domain( string $domain ): ?self {
+	public function with_domain( string $domain ): ?static {
 		return self::parse( $this->local . '@' . $domain );
 	}
 
@@ -50,14 +50,14 @@ trait Transformation {
 	 *
 	 * @param string $tag The subaddress tag.
 	 *
-	 * @return self|null New Email instance or null if not supported.
+	 * @return static|null New Email instance or null if not supported.
 	 */
-	public function with_subaddress( string $tag ): ?self {
+	public function with_subaddress( string $tag ): ?static {
 		if ( ! $this->valid || ! $this->supports_subaddressing() ) {
 			return null;
 		}
 
-		$tag = trim( str_replace( [ '+', ' ' ], [ '', '-' ], $tag ) );
+		$tag = self::sanitize_tag( $tag );
 		if ( $tag === '' ) {
 			return null;
 		}
@@ -68,9 +68,9 @@ trait Transformation {
 	/**
 	 * Create new instance without subaddress.
 	 *
-	 * @return self|null New Email instance.
+	 * @return static|null New Email instance.
 	 */
-	public function without_subaddress(): ?self {
+	public function without_subaddress(): ?static {
 		if ( ! $this->valid ) {
 			return null;
 		}
@@ -84,9 +84,9 @@ trait Transformation {
 	 * @param string      $purpose Purpose tag.
 	 * @param string|null $suffix  Optional suffix (defaults to year).
 	 *
-	 * @return self|null New Email instance or null if not supported.
+	 * @return static|null New Email instance or null if not supported.
 	 */
-	public function with_tag( string $purpose, ?string $suffix = null ): ?self {
+	public function with_tag( string $purpose, ?string $suffix = null ): ?static {
 		$tag = strtolower( $purpose );
 		$tag .= '-' . ( $suffix ?? date( 'Y' ) );
 
@@ -206,63 +206,6 @@ trait Transformation {
 	 */
 	public function to_placeholder(): string {
 		return self::ANONYMIZED_PLACEHOLDER;
-	}
-
-	/**
-	 * Check if this email equals another.
-	 *
-	 * @param self|string $other Email to compare.
-	 *
-	 * @return bool True if equal.
-	 */
-	public function equals( self|string $other ): bool {
-		if ( is_string( $other ) ) {
-			$other = self::parse( $other );
-		}
-
-		if ( ! $other instanceof self ) {
-			return false;
-		}
-
-		return $this->normalized === $other->normalized();
-	}
-
-	/**
-	 * Check if base addresses match (ignoring subaddress).
-	 *
-	 * @param self|string $other Email to compare.
-	 *
-	 * @return bool True if same base address.
-	 */
-	public function equals_base( self|string $other ): bool {
-		if ( is_string( $other ) ) {
-			$other = self::parse( $other );
-		}
-
-		if ( ! $other instanceof self ) {
-			return false;
-		}
-
-		return $this->base_address() === $other->base_address();
-	}
-
-	/**
-	 * Check if same domain.
-	 *
-	 * @param self|string $other Email to compare.
-	 *
-	 * @return bool True if same domain.
-	 */
-	public function same_domain( self|string $other ): bool {
-		if ( is_string( $other ) ) {
-			$other = self::parse( $other );
-		}
-
-		if ( ! $other instanceof self ) {
-			return false;
-		}
-
-		return $this->domain === $other->domain();
 	}
 
 }

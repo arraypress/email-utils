@@ -151,7 +151,7 @@ trait Scoring {
 			'digit_count'     => $this->digit_count(),
 			'auto_generated'  => $this->is_auto_generated(),
 			'has_typo'        => $this->has_typo(),
-			'suggestion'      => $this->suggested_email(),
+			'suggestion'      => $this->has_typo() ? $this->suggested_email() : null,
 			'mx_valid'        => $check_mx ? $this->has_mx() : null,
 			'spam_score'      => $this->spam_score( $check_mx ),
 			'spam_rating'     => $this->spam_rating( $check_mx ),
