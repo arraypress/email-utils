@@ -30,7 +30,7 @@ trait Comparison {
 	 *
 	 * @return bool True if equal.
 	 */
-	public function equals( self|string $other ): bool {
+	public function equals( $other ): bool {
 		if ( is_string( $other ) ) {
 			$other = self::parse( $other );
 		}
@@ -49,7 +49,7 @@ trait Comparison {
 	 *
 	 * @return bool True if same base address.
 	 */
-	public function equals_base( self|string $other ): bool {
+	public function equals_base( $other ): bool {
 		if ( is_string( $other ) ) {
 			$other = self::parse( $other );
 		}
@@ -68,7 +68,7 @@ trait Comparison {
 	 *
 	 * @return bool True if same domain.
 	 */
-	public function same_domain( self|string $other ): bool {
+	public function same_domain( $other ): bool {
 		if ( is_string( $other ) ) {
 			$other = self::parse( $other );
 		}

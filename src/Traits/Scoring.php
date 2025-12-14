@@ -83,13 +83,18 @@ trait Scoring {
 	public function spam_rating( bool $check_mx = false ): string {
 		$score = $this->spam_score( $check_mx );
 
-		return match ( true ) {
-			$score <= 10 => 'excellent',
-			$score <= 25 => 'good',
-			$score <= 50 => 'fair',
-			$score <= 75 => 'poor',
-			default => 'bad',
-		};
+		switch ( true ) {
+			case $score <= 10:
+				return 'excellent';
+			case $score <= 25:
+				return 'good';
+			case $score <= 50:
+				return 'fair';
+			case $score <= 75:
+				return 'poor';
+			default:
+				return 'bad';
+		}
 	}
 
 	/**

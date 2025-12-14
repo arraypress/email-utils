@@ -218,7 +218,7 @@ echo json_encode( $email );
 
 ## Requirements
 
-- PHP 8.2+
+- PHP 7.4+
 
 ## License
 

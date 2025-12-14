@@ -20,7 +20,7 @@
     "subaddress"
   ],
   "require": {
-    "php": ">=8.0"
+    "php": ">=7.4"
   },
   "require-dev": {
     "phpunit/phpunit": "^10.0"
@@ -30,7 +30,7 @@
       "ArrayPress\\EmailUtils\\": "src/"
     },
     "files": [
-      "src/Functions.php"
+      "src/Utilities/Functions.php"
     ]
   },
   "autoload-dev": {
