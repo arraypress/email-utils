@@ -24,3 +24,17 @@ if ( ! function_exists( 'parse_email' ) ) {
 		return Email::parse( $email );
 	}
 }
+
+if ( ! function_exists( 'sanitize_email_list' ) ) {
+	/**
+	 * Sanitize an email pattern list.
+	 *
+	 * @param string|array $input     Raw input.
+	 * @param bool         $as_string Return as string (default) or array.
+	 *
+	 * @return string|array Sanitized patterns.
+	 */
+	function sanitize_email_list( $input, bool $as_string = true ) {
+		return Email::sanitize_pattern_list( $input, $as_string );
+	}
+}
