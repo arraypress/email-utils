@@ -20,6 +20,7 @@ namespace ArrayPress\EmailUtils;
 use ArrayPress\EmailUtils\Traits\Comparison;
 use ArrayPress\EmailUtils\Traits\Core;
 use ArrayPress\EmailUtils\Traits\Detection;
+use ArrayPress\EmailUtils\Traits\Matching;
 use ArrayPress\EmailUtils\Traits\Transformation;
 use ArrayPress\EmailUtils\Traits\Scoring;
 use ArrayPress\EmailUtils\Traits\Utilities;
@@ -43,6 +44,7 @@ class Email implements JsonSerializable, Stringable {
 	use Detection;
 	use Transformation;
 	use Comparison;
+	use Matching;
 	use Scoring;
 	use Utilities;
 

@@ -51,6 +51,48 @@ $email->is_auto_generated();     // false
 $email->has_mx();                // true (DNS lookup)
 ```
 
+### Pattern Matching
+
+```php
+$email = Email::parse( 'user@company.edu' );
+
+// Match against a list of patterns
+$email->matches_any( [ '.edu', '@company.com' ] );  // true
+$email->matches_any( [ '.gov', '@test.com' ] );     // false
+
+// Match a single pattern
+$email->matches_pattern( '.edu' );          // true
+$email->matches_pattern( '@company.edu' );  // true
+$email->matches_pattern( 'company.edu' );   // true (partial domain)
+
+// Match all patterns
+$email->matches_all( [ '.edu', 'company.edu' ] );  // true
+
+// Pattern validation (static)
+Email::is_valid_pattern( '@domain.com' );  // true
+Email::is_valid_pattern( '.edu' );         // true
+Email::is_valid_pattern( 'invalid' );      // false
+
+// Get pattern type (static)
+Email::get_pattern_type( 'user@test.com' );  // 'email'
+Email::get_pattern_type( '@domain.com' );    // 'domain'
+Email::get_pattern_type( '.edu' );           // 'tld'
+Email::get_pattern_type( 'company.com' );    // 'partial'
+
+// Filter valid patterns (static)
+Email::filter_valid_patterns( [ '@test.com', '', '.edu', 'bad' ] );
+// Returns: [ '@test.com', '.edu' ]
+```
+
+#### Supported Pattern Types
+
+| Pattern        | Example         | Matches                            |
+|----------------|-----------------|------------------------------------|
+| Full email     | `user@test.com` | Exact email match only             |
+| Domain         | `@company.com`  | Any email ending with @company.com |
+| TLD            | `.edu`          | Any email ending with .edu         |
+| Partial domain | `company.com`   | @company.com and @sub.company.com  |
+
 ### Typo Detection
 
 ```php
@@ -171,6 +213,17 @@ echo json_encode( $email );
 | `has_excessive_specials()` | `bool`  | Too many -, _, or .            |
 | `has_long_local()`         | `bool`  | Local part > 20 chars          |
 | `has_long_domain()`        | `bool`  | Domain name > 15 chars         |
+
+### Matching
+
+| Method                    | Returns   | Description                       |
+|---------------------------|-----------|-----------------------------------|
+| `matches_any()`           | `bool`    | Matches any pattern in list       |
+| `matches_all()`           | `bool`    | Matches all patterns in list      |
+| `matches_pattern()`       | `bool`    | Matches a single pattern          |
+| `is_valid_pattern()`      | `bool`    | Pattern is valid (static)         |
+| `get_pattern_type()`      | `?string` | Get pattern type (static)         |
+| `filter_valid_patterns()` | `array`   | Filter to valid patterns (static) |
 
 ### Typo Suggestions
 
